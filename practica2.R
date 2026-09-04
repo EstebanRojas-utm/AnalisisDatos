@@ -109,4 +109,68 @@ ggplot(data=dataCateg) + geom_bar(mapping = aes(y = class, fill= fl))
 x11()
 ggplot(data=dataCateg) + geom_bar(mapping = aes(x = class, fill= class))
 
-#fisher and scop
+#variables numericas 
+quantitative_vars <- sapply(mpg, is.numeric)
+quantitative_vars_names <- names(mpg)[quantitative_vars]
+num_quantitative_vars <- length(quantitative_vars)
+min_quanti_vars <- sapply(quantitative_vars_names, function(x) min(mpg[[x]]))
+max_quanti_vars <- sapply(quantitative_vars_names, function(x) min(mpg[[x]]))
+cat("Número de variables cuantitativas: ", num_quantitative_vars, "\n")
+cat("Nombres de las variables cuantitativas: ", paste(quantitative_vars_names))
+cat("Rango de las variables cuantitativas: \n")
+for (idvarN in qualitative_vars_names){
+  cat(idvarN, ":[",min_quanti_vars[idvarN],"]")
+}
+
+#Graficas de variables continuas
+x11()
+#Variable con distribución ligeramente sesgada a la derecha
+ggplot(data = mpg, mapping = aes(x = cty)) + geom_histogram(bins = 10, fill = "grey") + geom_freqpoly(binwidth = 3, color = "red") + theme_light()
+                                                            
+x11()
+ggplot(data = mpg, aes(x=cty)) + geom_density(alpha=0.1, coulor = "lightblue") + theme_dark()
+
+summary(mpg$cty)
+x11()
+ggplot(data=mpg, mapping = aes(x=cty)) + geom_boxplot()
+x11()
+ggplot(data=mpg, mapping = aes(sample=cty)) + stat_qq(color = "red") + stat_qq_line(color="blue")
+
+mpg <- mpg %>% mutate(class=factor(class))
+summary(mpg)
+
+x11()
+ggplot(data=mpg, aes(cty, fill = class, colour = class)) + geom_density(alpha = 0.1)
+
+#Multiples boxplot
+x11()
+ggplot(data=mpg, mapping = aes(x=cty, y=class)) + geom_boxplot(fill = "plum")
+
+#Variable hwy
+x11()
+ggplot(data = mpg, aes(x=hwy)) + geom_density(alpha=0.1, coulor = "blue") + theme_dark()
+x11()
+ggplot(data=mpg, mapping = aes(x=hwy)) + geom_boxplot()
+x11()
+ggplot(data=mpg, mapping = aes(sample=hwy)) + stat_qq(color = "red") + stat_qq_line(color="blue")
+x11()
+ggplot(data=mpg, aes(hwy, fill = class, colour = class)) + geom_density(alpha = 0.1)
+x11()
+ggplot(data=mpg, mapping = aes(x=hwy, y=class)) + geom_boxplot(fill = "purple")
+
+
+
+#Variable cyl
+x11()
+ggplot(data = mpg, aes(x=cyl)) + geom_density(alpha=0.1, coulor = "blue") + theme_dark()
+x11()
+ggplot(data=mpg, mapping = aes(x=cyl)) + geom_boxplot()
+x11()
+ggplot(data=mpg, mapping = aes(sample=cyl)) + stat_qq(color = "red") + stat_qq_line(color="blue")
+x11()
+ggplot(data=mpg, aes(cyl, fill = class, colour = class)) + geom_density(alpha = 0.1)
+x11()
+ggplot(data=mpg, mapping = aes(x=cyl, y=class)) + geom_boxplot(fill = "purple")
+
+
+

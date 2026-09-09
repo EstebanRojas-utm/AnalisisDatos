@@ -126,5 +126,5 @@ valExtremos_PorEdad <- dataMarathon %>%
   filter(es_extremo == TRUE) %>%
   select(age, time) # Nos quedamos solo con las columnas importantes
 
-cat("\n--- Valores Extremos Particionados por 'Age' ---\n")
+cat("\n Valores Extremos Particionados por 'Age'\n")
 print(valExtremos_PorEdad)

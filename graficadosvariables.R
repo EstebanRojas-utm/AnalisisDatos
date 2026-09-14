@@ -55,43 +55,131 @@ ggpairs(dataAutosNum, columns = varNum, title = "Análisis de correlacion",
 
 ######## CRAMER´s #########################
 
-cramersS <- function(X,Y) {
+cramersS <- function(X, Y) {
   freqIndx <- table(X)
   freqIndy <- table(Y)
-  freqObsxy <- table(Y,X)
+  freqObsxy <- table(Y, X)
+  
   pxy_mat <- freqObsxy
-  dimPXY <- dim(pxy_mat)
+  dimPXY <- dim(pxy_mat) # [1] número de filas (Y), [2] número de columnas (X)
+  
+  # 1. Corrección de ncol y dimensiones
   freqx_mat <- matrix(freqIndx,
                       nrow = dimPXY[1],
-                      nol = length(freqIndx),
+                      ncol = dimPXY[2],
                       byrow = TRUE)
-  freqx_mat
+  
   freqy_mat <- matrix(freqIndy,
-                      nrow = length(freqIndx),
-                      nol =  dimPXY[2],
+                      nrow = dimPXY[1],
+                      ncol = dimPXY[2],
                       byrow = FALSE)
-  freqy_mat
-  freqx_mat
   
   N <- length(X)
-  mxy_mat <- (freqx_mat*freqy_mat)/N
-  print("Matriz P ")
-  print(pxy_mat)
-  print("Matriz M")
-  print(mxy_mat)
-  Xsquare <- ((pxy_mat-mxy_mat) * (pxy_mat - mxy_mat))/(mxy_mat)
-  print("XsquareM")
-  print(Xsquare)
-  Xsquare <- sum(Xsquare)
-  print(Xsquare)
+  mxy_mat <- (freqx_mat * freqy_mat) / N
+  
+  # Cálculo de Chi-cuadrado
+  XsquareM <- ((pxy_mat - mxy_mat)^2) / mxy_mat
+  Xsquare <- sum(XsquareM)
+  
   Rx <- length(freqIndx)
   Ky <- length(freqIndy)
-  cramersCoef <- sqrt(Xsquare/(N*(min(Rx-1, Ky-1))))
-  print(cramersCoef)
+  
+  min_dim <- min(Rx - 1, Ky - 1)
+  
+  # Manejo de casos donde min_dim == 0 para evitar división por cero
+  if (min_dim == 0) {
+    cramersCoef <- 0
+  } else {
+    cramersCoef <- sqrt(Xsquare / (N * min_dim))
+  }
+  
   return(cramersCoef)
 }
-
 library(reshape2)
-namescategoricas <- c('model', 'year', 'trans', 'drv', 'fl')
+namescategoricas <- c('model', 'year', 'trans', 'drv', 'fl', 'class')
+cramersMat <- sapply(namescategoricas, function(X)
+                  sapply(namescategoricas, function(Y) cramersS(mpg[[X]], mpg[[Y]])))
+
+print(cramersMat)
+cramersMat <- as.data.frame(cramersMat)
+results <- melt(cramersMat, value.name = "coefCramers")
+varsY <- rep(namescategoricas, 6)
+print(varsY)
+result <- cbind(results, varsY)
+print(result)
+names(result) <- c("varX", "coefCramers", "varY")
+print(result)
+
+
+
+#Heatmap vizualizacion con ggplot
+results[,1] <- factor(result[,1])
+g <- ggplot(results, aes(factor(varX, levels = namescategoricas),
+                         factor(varY, levels = namescategoricas))) + 
+  geom_tile(aes(fill = coefCramers), colour = "black") + 
+  geom_text(aes(label = round(coefCramers,2)))+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  scale_fill_gradient(low="white", high = "steelblue") +
+  theme_bw() +xlab(NULL) + ylab(NULL) +
+  theme(axis.text.x = element_text(angle = -90, hjust = 0))+
+  ggtitle("Cramer's V heatmap")
+g
+x11()
+g
+
+
+
+
+
+
+
+
+
+print(cramersMat)
+
+# 1. Convertimos la matriz a Data Frame
+cramersMat_df <- as.data.frame(cramersMat)
+
+# 2. Aplicamos melt para transformar de formato ancho a formato largo
+results <- melt(cramersMat_df, value.name = "coefCramers")
+
+# 3. Creamos la columna varY para emparejar cada combinación
+varsY <- rep(namescategoricas, times = length(namescategoricas))
+
+# 4. Construimos el data frame final unificado 'df_heatmap'
+df_heatmap <- data.frame(
+  varX = results$variable,
+  varY = varsY,
+  coefCramers = results$coefCramers
+)
+
+# 5. Convertimos a factor ordenado para mantener la estructura en el gráfico
+df_heatmap$varX <- factor(df_heatmap$varX, levels = namescategoricas)
+df_heatmap$varY <- factor(df_heatmap$varY, levels = namescategoricas)
+
+print("--- Data Frame preparado para Heatmap ---")
+print(df_heatmap)
+
+
+g <- ggplot(df_heatmap, aes(x = varX, y = varY)) + 
+  geom_tile(aes(fill = coefCramers), colour = "black") + 
+  scale_fill_gradient(low = "white", high = "steelblue", limits = c(0, 1)) +
+  labs(
+    title = "Cramer's V Heatmap",
+    x = NULL,
+    y = NULL,
+    fill = "Cramer's V"
+  ) +
+  geom_text(aes(label = round(coefCramers,2)))+
+  theme_bw() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
+    panel.grid = element_blank()
+  )
+
+# Desplegar el gráfico
+g
+x11()
+g
 
 

@@ -53,5 +53,12 @@ summary(dataCateg)
 plot_bar(dataCateg)
 
 
+library(dlookr)
+library(tidyverse)
+
+dataHN%>%
+  eda_paged_report(target="CLASS", subtitle= "HEPATITIS", output_dir = "./", output_file = "EDA.pdf", theme="blue" )
+
+#Limpiar datos 
 
 

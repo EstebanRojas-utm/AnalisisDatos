@@ -1,0 +1,13 @@
+make,fuel-type,aspiration,num-of-doors,drive-wheels,engine-location,wheel-base,length,width,height
+audi,gas,std,four,fwd,front,99.8,176.6,66.2,54.3
+audi,gas,std,four,4wd,front,99.4,176.6,66.4,54.3
+audi,gas,std,two,fwd,front,99.8,177.3,66.3,53.1
+audi,gas,std,four,fwd,front,105.8,192.7,71.4,55.7
+mazda,gas,std,two,rwd,front,95.3,169,65.7,49.6
+mazda,gas,std,two,fwd,front,98.8,177.8,66.5,53.7
+mazda,gas,std,four,fwd,front,98.8,177.8,66.5,55.5
+peugot,diesel,turbo,four,rwd,front,107.9,186.7,68.4,56.7
+peugot,diesel,turbo,four,rwd,front,107.9,186.7,68.4,56.7
+volvo,gas,turbo,four,rwd,front,104.3,188.8,67.2,57.5
+volvo,gas,std,four,rwd,front,109.1,188.8,68.9,55.5
+volvo,gas,turbo,four,rwd,front,109.1,188.8,68.8,55.5
